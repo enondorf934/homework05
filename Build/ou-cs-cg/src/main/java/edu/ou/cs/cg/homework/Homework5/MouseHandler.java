@@ -83,8 +83,11 @@ public final class MouseHandler extends MouseAdapter
 
 	public void		mousePressed(MouseEvent e)
 	{
-		originSpot = calcCoordinatesInView((int)view.getOrigin().x, (int) view.getOrigin().y);
-		clickSpot = calcCoordinatesInView(e.getX(), e.getY());
+
+		//formatted for view
+		originSpot = view.getOrigin();
+		//pixel cooredinates
+		clickSpot = new Point2D.Double(e.getX(), e.getY());
 	}
 
 	public void		mouseReleased(MouseEvent e)
@@ -97,10 +100,12 @@ public final class MouseHandler extends MouseAdapter
 
 	public void		mouseDragged(MouseEvent e)
 	{
-		double xChange = e.getX() - clickSpot.x;
-		double yChange = e.getY()/10 - clickSpot.y;
-		Point2D.Double change = calcCoordinatesInView((int) xChange, (int) yChange);
-		Point2D.Double newOrigin = calcCoordinatesInView((int) (originSpot.x + change.x), (int) (originSpot.y + change.y));
+		Point2D.Double firstClickFormatted = calcCoordinatesInView((int) clickSpot.x, (int) clickSpot.y);
+		Point2D.Double dragToFormatted = calcCoordinatesInView(e.getX(), e.getY());
+		double xChange = dragToFormatted.x - firstClickFormatted.x;
+		double yChange = dragToFormatted.y - firstClickFormatted.y;
+		
+		Point2D.Double newOrigin = calcCoordinatesInView((int) (originSpot.x + xChange), (int) (originSpot.y + yChange));
 		view.setOrigin(newOrigin);
 		view.setCursor(calcCoordinatesInView(e.getX(), e.getY()));
 
