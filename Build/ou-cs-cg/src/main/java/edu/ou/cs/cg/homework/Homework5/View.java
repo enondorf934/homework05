@@ -66,6 +66,13 @@ public final class View
 	private Point2D.Double				cursor;		// Current cursor coordinates
 	private ArrayList<Point2D.Double>	points;		// User's polyline points
 
+	private LinkedList<Node> nodes = new LinkedList<Node>();
+
+	private boolean isFirstRender = true;
+
+	private int indexOfNodesList = 0;
+	private int indexSelectedNode = 0;
+
 	//**********************************************************************
 	// Constructors and Finalizer
 	//**********************************************************************
@@ -96,6 +103,32 @@ public final class View
 	public int	getWidth()
 	{
 		return w;
+	}
+
+	public LinkedList<Node> getNodes()
+	{
+		return nodes;
+	}
+
+	public int getIndexOfNodesList()
+	{
+		return indexOfNodesList;
+	}
+
+	public void setIndexOfNodesList(int n)
+	{
+		indexOfNodesList = n;
+	}
+
+	public int getIndexSelected()
+	{
+		return indexSelectedNode;
+	}
+
+	public void setIndexSelected(int n)
+	{
+		indexSelectedNode = n;
+		canvas.repaint();
 	}
 
 	public int	getHeight()
@@ -211,17 +244,81 @@ public final class View
 	{
 		GL2		gl = drawable.getGL().getGL2();
 
+		if(isFirstRender)
+		{
+			String[] nameList = Network.getAllNames();
+
+			for(int i = 0; i<nameList.length; i++)
+			{
+				nodes.add(new Node(nameList[i], Network.getSides(nameList[i]), Network.getColor(nameList[i])));
+			}
+		}
+		isFirstRender = false;
+
 		gl.glClear(GL.GL_COLOR_BUFFER_BIT);		// Clear the buffer
 		drawBounds(gl);							// Unit bounding box
 		drawAxes(gl);							// X and Y axes
 		drawCursor(gl);							// Crosshairs at mouse location
-		drawCursorCoordinates(drawable);		// Draw some text
+		drawNodeNames(drawable);		// Draw some text
+		drawRenderedNodes(gl);
 	//	drawPolyline(gl);						// Draw the user's sketch
 	}
 
 	//**********************************************************************
 	// Private Methods (Scene)
 	//**********************************************************************
+
+	private void drawRenderedNodes(GL2 gl)
+	{
+		for(Node node : nodes) {
+			if(node.getIsRendered())
+			{
+				if(nodes.indexOf(node) == indexSelectedNode)
+				{
+					drawNode(gl, node.getColor(), node.getSides(), true, node.getCx(), node.getCy());
+				}
+				else
+				{
+					drawNode(gl, node.getColor(), node.getSides(), false, node.getCx(), node.getCy());
+				}
+				
+			}
+				
+		}
+	}
+
+	private void drawNode(GL2 gl, Color color, int numSides, boolean isSelected, double cx, double cy)
+	{
+		
+		gl.glColor3f(color.getRed()/255.0f, color.getGreen()/255.0f, color.getBlue()/255.0f);
+
+		if(isSelected)
+		{
+			gl.glColor3f(14/255.0f, 28/255.0f, 51/255.0f);
+		}
+
+		gl.glBegin(GL.GL_LINE_LOOP);
+
+		for (int i=0; i<numSides; i++)
+		{
+			double	a = (2.0 * Math.PI) * (i / (double)numSides);
+
+			gl.glVertex2d(cx + .1 * Math.cos(a), cy + .1 * Math.sin(a));
+		}
+		gl.glEnd();
+
+		gl.glColor3f(color.getRed()/255.0f, color.getGreen()/255.0f, color.getBlue()/255.0f);
+		gl.glBegin(GL2.GL_POLYGON);
+
+		for (int i=0; i<numSides; i++)
+		{
+			double	a = (2.0 * Math.PI) * (i / (double)numSides);
+
+			gl.glVertex2d(cx + .1 * Math.cos(a), cy + .1 * Math.sin(a));
+		}
+
+		gl.glEnd();
+	}
 
 	private void	drawBounds(GL2 gl)
 	{
@@ -269,14 +366,23 @@ public final class View
 		gl.glEnd();
 	}
 
-	private void	drawCursorCoordinates(GLAutoDrawable drawable)
+	private void	drawNodeNames(GLAutoDrawable drawable)
 	{
 		if (cursor == null)
 			return;
 
-		String	sx = FORMAT.format(new Double(cursor.x));
-		String	sy = FORMAT.format(new Double(cursor.y));
-		String	s = "(" + sx + "," + sy + ")";
+
+		String	s = nodes.get(indexOfNodesList).getName();
+
+		boolean allRendered = true;
+
+		for(Node node : nodes) {
+			if(!node.getIsRendered())
+				allRendered = false;
+		}
+
+		if(allRendered)
+			s = "No nodes left";
 
 		renderer.beginRendering(drawable.getWidth(), drawable.getHeight());
 		renderer.setColor(1.0f, 1.0f, 0, 1.0f);

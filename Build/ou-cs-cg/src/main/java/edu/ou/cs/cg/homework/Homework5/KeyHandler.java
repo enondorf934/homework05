@@ -18,6 +18,10 @@ package edu.ou.cs.cg.homework.Homework5;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.util.*;
+
+import com.sun.javafx.collections.ElementObservableListDecorator;
+import com.sun.webkit.Utilities;
 
 //******************************************************************************
 
@@ -56,10 +60,117 @@ public final class KeyHandler extends KeyAdapter
 	public void		keyPressed(KeyEvent e)
 	{
 		Point2D.Double	p = view.getOrigin();
-		double			a = (Utilities.isShiftDown(e) ? 0.01 : 0.1);
+		double			a = (edu.ou.cs.cg.homework.Homework5.Utilities.isShiftDown(e) ? 0.01 : 0.1);
+		LinkedList<Node> nodes = view.getNodes();
+		int currentNodesIndex = view.getIndexOfNodesList();
+		int currentSelected = view.getIndexSelected();
+
+		boolean shiftDown = edu.ou.cs.cg.homework.Homework5.Utilities.isShiftDown(e);
+
 
 		switch (e.getKeyCode())
 		{
+			case KeyEvent.VK_PERIOD:
+				if(shiftDown)
+				{
+					boolean stopFlag = true;
+					do{
+						if(currentNodesIndex + 1 < nodes.size())
+						{
+							currentNodesIndex++;
+		
+						}
+						else {
+							currentNodesIndex = 0;
+						}
+						if(!nodes.get(currentNodesIndex).getIsRendered())
+						{
+							stopFlag = false;
+							view.setIndexOfNodesList(currentNodesIndex);
+						}
+					}while(stopFlag);
+				}
+				else {
+					boolean stopFlag = true;
+					do{
+						if(currentSelected + 1 < nodes.size())
+						{
+							currentSelected++;
+		
+						}
+						else {
+							currentSelected = -1;
+						}
+						if(nodes.get(currentSelected).getIsRendered())
+						{
+							stopFlag = false;
+							view.setIndexSelected(currentSelected);
+						}
+					}while(stopFlag);
+				}
+				break;
+			case KeyEvent.VK_COMMA:
+				if(shiftDown)
+				{
+					boolean stopFlag = true;
+					do{
+						if(currentNodesIndex - 1 >= 0)
+						{
+							currentNodesIndex--;
+		
+						}
+						else {
+							currentNodesIndex = nodes.size() -1;
+						}
+						if(!nodes.get(currentNodesIndex).getIsRendered())
+						{
+							stopFlag = false;
+							view.setIndexOfNodesList(currentNodesIndex);
+						}
+					}while(stopFlag);
+				}
+				else {
+
+					boolean stopFlag = true;
+					do{
+						if(currentSelected - 1 < nodes.size())
+						{
+							currentSelected--;
+		
+						}
+						else {
+							currentSelected = nodes.size() -1;
+						}
+						if(nodes.get(currentSelected).getIsRendered())
+						{
+							stopFlag = false;
+							view.setIndexSelected(currentSelected);
+						}
+					}while(stopFlag);
+				}
+			break;
+
+			case KeyEvent.VK_ENTER:
+				nodes.get(currentNodesIndex).setIsRendered(true);
+				view.setIndexSelected(currentNodesIndex);
+				if(currentNodesIndex + 1 < nodes.size())
+				{
+					currentNodesIndex++;
+
+				}
+				else {
+					currentNodesIndex = 0;
+				}
+				if(!nodes.get(currentNodesIndex).getIsRendered())
+				{
+					view.setIndexOfNodesList(currentNodesIndex);
+				}
+				break;
+
+
+
+
+
 			case KeyEvent.VK_NUMPAD5:
 				p.x = 0.0;	p.y = 0.0;	break;
 
