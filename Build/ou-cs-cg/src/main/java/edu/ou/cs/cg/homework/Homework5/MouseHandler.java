@@ -105,7 +105,7 @@ public final class MouseHandler extends MouseAdapter
 		double xChange = dragToFormatted.x - firstClickFormatted.x;
 		double yChange = dragToFormatted.y - firstClickFormatted.y;
 		
-		Point2D.Double newOrigin = calcCoordinatesInView((int) (originSpot.x + xChange), (int) (originSpot.y + yChange));
+		Point2D.Double newOrigin = new Point2D.Double( (originSpot.x + xChange),  (originSpot.y + yChange));
 		view.setOrigin(newOrigin);
 		view.setCursor(calcCoordinatesInView(e.getX(), e.getY()));
 
