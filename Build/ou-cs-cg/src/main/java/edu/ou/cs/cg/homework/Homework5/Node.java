@@ -2,6 +2,8 @@ package edu.ou.cs.cg.homework.Homework5;
 
 import java.awt.Color;
 
+import edu.ou.cs.cg.homework.Homework5.Vector;
+
 public final class Node {
 
     private String name;
@@ -10,6 +12,7 @@ public final class Node {
     private boolean isRendered;
     private double cx;
     private double cy;
+    private Vector[] vectors;
 
     public Node(String name, int sides, Color color)
     {
@@ -26,6 +29,27 @@ public final class Node {
 
         if(Math.random() < .5)
             this.cy = this.cy * -1;
+
+        this.vectors = this.drawShape();
+    }
+
+    public Vector[] drawShape()
+    {
+        Vector[] newArray = new Vector[(this.sides)];
+
+        for (int i=0; i<this.sides; i++)
+		{
+			double	a = (2.0 * Math.PI) * (i / (double)sides);
+
+			newArray[i] = new Vector(cx + .1 * Math.cos(a), cy + .1 * Math.sin(a));
+        }
+        
+        return newArray;
+    }
+
+    public Vector[] getVectors()
+    {
+        return this.vectors;
     }
 
     public String getName()

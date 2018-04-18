@@ -65,8 +65,9 @@ public final class KeyHandler extends KeyAdapter
 		int currentNodesIndex = view.getIndexOfNodesList();
 		int currentSelected = view.getIndexSelected();
 
-		boolean shiftDown = edu.ou.cs.cg.homework.Homework5.Utilities.isShiftDown(e);
+		System.out.println(currentSelected);
 
+		boolean shiftDown = edu.ou.cs.cg.homework.Homework5.Utilities.isShiftDown(e);
 
 		switch (e.getKeyCode())
 		{
@@ -96,14 +97,18 @@ public final class KeyHandler extends KeyAdapter
 						if(currentSelected + 1 < nodes.size())
 						{
 							currentSelected++;
-		
 						}
 						else {
 							currentSelected = -1;
 						}
-						if(nodes.get(currentSelected).getIsRendered())
+						if(currentSelected != -1 && nodes.get(currentSelected).getIsRendered())
 						{
 							stopFlag = false;
+							view.setIndexSelected(currentSelected);
+						}
+						else if(currentSelected == -1)
+						{
+							stopFlag = false; 
 							view.setIndexSelected(currentSelected);
 						}
 					}while(stopFlag);
@@ -135,14 +140,24 @@ public final class KeyHandler extends KeyAdapter
 					do{
 						if(currentSelected - 1 < nodes.size())
 						{
-							currentSelected--;
+							if(currentSelected == -1)
+							{
+								currentSelected = nodes.size() -1;
+							}
+							else{
+								currentSelected--;
+							}	
 		
 						}
 						else {
-							currentSelected = nodes.size() -1;
+							currentSelected = -1;
 						}
-						if(nodes.get(currentSelected).getIsRendered())
+						if(currentSelected != nodes.size() && nodes.get(currentSelected).getIsRendered())
 						{
+							stopFlag = false;
+							view.setIndexSelected(currentSelected);
+						}
+						else if(currentSelected == -1){
 							stopFlag = false;
 							view.setIndexSelected(currentSelected);
 						}
@@ -203,7 +218,25 @@ public final class KeyHandler extends KeyAdapter
 				p.x += a;	p.y += a;	break;
 
 			case KeyEvent.VK_DELETE:
-				view.clear();
+				nodes.get(currentSelected).setIsRendered(false);
+				boolean stopFlag = true;
+				do{
+					if(currentSelected + 1 < nodes.size())
+					{
+						currentSelected++;
+					}
+					else {
+						currentSelected = 0;
+					}
+
+					if(nodes.get(currentSelected).getIsRendered())
+					{
+						stopFlag = false;
+						view.setIndexOfNodesList(currentSelected);
+					}
+
+				}while(stopFlag);
+
 				return;
 		}
 

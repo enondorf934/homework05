@@ -71,7 +71,7 @@ public final class View
 	private boolean isFirstRender = true;
 
 	private int indexOfNodesList = 0;
-	private int indexSelectedNode = 0;
+	private int indexSelectedNode = -1;
 
 	//**********************************************************************
 	// Constructors and Finalizer
@@ -275,11 +275,11 @@ public final class View
 			{
 				if(nodes.indexOf(node) == indexSelectedNode)
 				{
-					drawNode(gl, node.getColor(), node.getSides(), true, node.getCx(), node.getCy());
+					drawNode(gl, node, true, node.getCx(), node.getCy());
 				}
 				else
 				{
-					drawNode(gl, node.getColor(), node.getSides(), false, node.getCx(), node.getCy());
+					drawNode(gl, node, false, node.getCx(), node.getCy());
 				}
 				
 			}
@@ -287,34 +287,33 @@ public final class View
 		}
 	}
 
-	private void drawNode(GL2 gl, Color color, int numSides, boolean isSelected, double cx, double cy)
+	private void drawNode(GL2 gl, Node node, boolean isSelected, double cx, double cy)
 	{
+		Color color = node.getColor();
 		
 		gl.glColor3f(color.getRed()/255.0f, color.getGreen()/255.0f, color.getBlue()/255.0f);
 
 		if(isSelected)
 		{
-			gl.glColor3f(14/255.0f, 28/255.0f, 51/255.0f);
+			//gl.glColor3f(14/255.0f, 28/255.0f, 51/255.0f);
+			gl.glColor3f(1.0f, 1.0f, 1.0f);
 		}
 
 		gl.glBegin(GL.GL_LINE_LOOP);
 
-		for (int i=0; i<numSides; i++)
+		for (int i=0; i<node.getVectors().length; i++)
 		{
-			double	a = (2.0 * Math.PI) * (i / (double)numSides);
 
-			gl.glVertex2d(cx + .1 * Math.cos(a), cy + .1 * Math.sin(a));
+			gl.glVertex2d(node.getVectors()[i].x, node.getVectors()[i].y);
 		}
 		gl.glEnd();
 
 		gl.glColor3f(color.getRed()/255.0f, color.getGreen()/255.0f, color.getBlue()/255.0f);
 		gl.glBegin(GL2.GL_POLYGON);
 
-		for (int i=0; i<numSides; i++)
+		for (int i=0; i<node.getVectors().length; i++)
 		{
-			double	a = (2.0 * Math.PI) * (i / (double)numSides);
-
-			gl.glVertex2d(cx + .1 * Math.cos(a), cy + .1 * Math.sin(a));
+			gl.glVertex2d(node.getVectors()[i].x, node.getVectors()[i].y);
 		}
 
 		gl.glEnd();
