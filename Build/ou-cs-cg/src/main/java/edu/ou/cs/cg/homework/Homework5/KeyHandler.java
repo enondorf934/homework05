@@ -61,11 +61,19 @@ public final class KeyHandler extends KeyAdapter
 	{
 		Point2D.Double	p = view.getOrigin();
 		double			a = (edu.ou.cs.cg.homework.Homework5.Utilities.isShiftDown(e) ? 0.01 : 0.1);
+		
 		LinkedList<Node> nodes = view.getNodes();
 		int currentNodesIndex = view.getIndexOfNodesList();
 		int currentSelected = view.getIndexSelected();
+		Node selectedNode = null;
+		double nodeWidth = 0;
 
-		System.out.println(currentSelected);
+		if(currentSelected != -1)
+		{
+			selectedNode = nodes.get(currentSelected);
+			nodeWidth = selectedNode.getRadius() * 2;
+		}
+
 
 		boolean shiftDown = edu.ou.cs.cg.homework.Homework5.Utilities.isShiftDown(e);
 
@@ -114,6 +122,7 @@ public final class KeyHandler extends KeyAdapter
 					}while(stopFlag);
 				}
 				break;
+
 			case KeyEvent.VK_COMMA:
 				if(shiftDown)
 				{
@@ -182,41 +191,6 @@ public final class KeyHandler extends KeyAdapter
 				}
 				break;
 
-
-
-
-
-			case KeyEvent.VK_NUMPAD5:
-				p.x = 0.0;	p.y = 0.0;	break;
-
-			case KeyEvent.VK_NUMPAD4:
-			case KeyEvent.VK_LEFT:
-				p.x -= a;	p.y += 0.0;	break;
-
-			case KeyEvent.VK_NUMPAD6:
-			case KeyEvent.VK_RIGHT:
-				p.x += a;	p.y += 0.0;	break;
-
-			case KeyEvent.VK_NUMPAD2:
-			case KeyEvent.VK_DOWN:
-				p.x += 0.0;	p.y -= a;	break;
-
-			case KeyEvent.VK_NUMPAD8:
-			case KeyEvent.VK_UP:
-				p.x += 0.0;	p.y += a;	break;
-
-			case KeyEvent.VK_NUMPAD1:
-				p.x -= a;	p.y -= a;	break;
-
-			case KeyEvent.VK_NUMPAD7:
-				p.x -= a;	p.y += a;	break;
-
-			case KeyEvent.VK_NUMPAD3:
-				p.x += a;	p.y -= a;	break;
-
-			case KeyEvent.VK_NUMPAD9:
-				p.x += a;	p.y += a;	break;
-
 			case KeyEvent.VK_DELETE:
 				nodes.get(currentSelected).setIsRendered(false);
 				boolean stopFlag = true;
@@ -236,8 +210,102 @@ public final class KeyHandler extends KeyAdapter
 					}
 
 				}while(stopFlag);
+				break;
 
-				return;
+			case KeyEvent.VK_UP:
+				if(!shiftDown)
+				{
+					if(selectedNode != null)
+					{
+						selectedNode.setCy(selectedNode.getCy() + nodeWidth*.1);
+						selectedNode.updateVectors();
+					}
+						
+					
+					view.refresh();
+				}
+				else
+				{
+					if(selectedNode != null)
+					{
+						selectedNode.setRadius(selectedNode.getRadius() * 1.1);
+						selectedNode.updateVectors();
+					}
+
+					view.refresh();
+				}
+				break;
+
+			case KeyEvent.VK_DOWN:
+				if(!shiftDown)
+				{
+					if(selectedNode != null)
+					{
+						selectedNode.setCy(selectedNode.getCy() - nodeWidth*.1);
+						selectedNode.updateVectors();
+					}
+						
+					view.refresh();
+				}
+				else
+				{
+					if(selectedNode != null)
+					{
+						selectedNode.setRadius(selectedNode.getRadius() * .9);
+						selectedNode.updateVectors();
+					}
+
+					view.refresh();
+				}
+				break;
+				
+			case KeyEvent.VK_RIGHT:
+				if(!shiftDown)
+				{
+					if(selectedNode != null)
+					{
+						selectedNode.setCx(selectedNode.getCx() + nodeWidth*.1);
+						selectedNode.updateVectors();
+					}
+						
+					view.refresh();
+				}
+				else
+				{
+					if(selectedNode != null)
+					{
+						selectedNode.setRadius(selectedNode.getRadius() * 1.1);
+						selectedNode.updateVectors();
+					}
+
+					view.refresh();
+				}
+				break;
+
+			case KeyEvent.VK_LEFT:
+				if(!shiftDown)
+				{
+					if(selectedNode != null)
+					{
+						selectedNode.setCx(selectedNode.getCx() - nodeWidth*.1);
+						selectedNode.updateVectors();
+					}
+						
+					view.refresh();
+				}
+				else
+				{
+					if(selectedNode != null)
+					{
+						selectedNode.setRadius(selectedNode.getRadius() * .9);
+						selectedNode.updateVectors();
+					}
+
+					view.refresh();
+				}
+				break;
+
+
 		}
 
 		view.setOrigin(p);

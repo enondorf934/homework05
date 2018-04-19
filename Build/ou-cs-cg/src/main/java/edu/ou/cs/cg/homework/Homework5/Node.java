@@ -13,6 +13,7 @@ public final class Node {
     private double cx;
     private double cy;
     private Vector[] vectors;
+    private double radius;
 
     public Node(String name, int sides, Color color)
     {
@@ -30,6 +31,8 @@ public final class Node {
         if(Math.random() < .5)
             this.cy = this.cy * -1;
 
+        this.radius = .1;
+
         this.vectors = this.drawShape();
     }
 
@@ -39,12 +42,31 @@ public final class Node {
 
         for (int i=0; i<this.sides; i++)
 		{
-			double	a = (2.0 * Math.PI) * (i / (double)sides);
+			double	a = (2.0 * Math.PI) * (i / (double)this.sides);
 
-			newArray[i] = new Vector(cx + .1 * Math.cos(a), cy + .1 * Math.sin(a));
+			newArray[i] = new Vector(this.cx + this.radius * Math.cos(a), this.cy + this.radius * Math.sin(a));
         }
         
         return newArray;
+    }
+
+    public void updateVectors()
+    {
+        Vector[] newArray = new Vector[(this.sides)];
+
+        for (int i=0; i<this.sides; i++)
+		{
+			double	a = (2.0 * Math.PI) * (i / (double)this.sides);
+
+			newArray[i] = new Vector(this.cx + this.radius * Math.cos(a), this.cy + this.radius * Math.sin(a));
+        }
+        
+        this.vectors = newArray;
+    }
+
+    public double getRadius()
+    {
+        return this.radius;
     }
 
     public Vector[] getVectors()
@@ -87,4 +109,18 @@ public final class Node {
         return this.cy;
     }
 
+    public void setCx(double n)
+    {
+        this.cx = n;
+    }
+
+    public void setCy(double n)
+    {
+        this.cy = n;
+    }
+
+    public void setRadius(double n)
+    {
+        this.radius = n;
+    }
 }

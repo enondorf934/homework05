@@ -100,6 +100,11 @@ public final class View
 	// Getters and Setters
 	//**********************************************************************
 
+	public void refresh()
+	{
+		canvas.repaint();
+	}
+
 	public int	getWidth()
 	{
 		return w;
@@ -412,6 +417,43 @@ public final class View
 			gl.glVertex2d(p.x, p.y);
 
 		gl.glEnd();
+	}
+
+	private double crossproduct(Vector line, Vector nextLine,  double speedx, double speedy)
+	{
+		Vector tipMinusPoint = new Vector(nextLine.x - speedx, nextLine.y - speedy);
+		Vector tailMinusPoint = new Vector(line.x - speedx, line.y - speedy);
+
+		return (tipMinusPoint.x * tailMinusPoint.y - tipMinusPoint.y * tailMinusPoint.x);
+
+	}
+
+	//returns index of selected node, or -1 if click isnt in node
+	public boolean checkIfClickInsideNode(Point2D.Double clickPoint, Node node) 
+	{
+		Vector[] vectors = node.getVectors();
+		boolean isInside = false;
+
+		for(int i =0 ; i<vectors.length; i++)
+		{
+			if(i+1 < vectors.length)
+			{
+				//check if the next point is outside the container, if it is reflect and set the normal vector
+				if(crossproduct(vectors[i], vectors[i+1], clickPoint.x, clickPoint.y) > 0)
+				{
+					isInside = true;					
+				}
+			}
+			else
+			{
+				if(crossproduct(vectors[i], vectors[0], clickPoint.x, clickPoint.y) > 0)
+				{
+					isInside = true;
+				}
+			}
+		}
+
+		return isInside;
 	}
 }
 

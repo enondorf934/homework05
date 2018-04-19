@@ -18,6 +18,7 @@ package edu.ou.cs.cg.homework.Homework5;
 import java.awt.*;
 import java.awt.event.*;
 import java.awt.geom.*;
+import java.util.*;
 
 //******************************************************************************
 
@@ -63,10 +64,29 @@ public final class MouseHandler extends MouseAdapter
 	{
 		Point2D.Double	v = calcCoordinatesInView(e.getX(), e.getY());
 
-		if (Utilities.isShiftDown(e))
-			view.setOrigin(v);
-		else
-			view.add(v);
+		LinkedList<Node> nodes = view.getNodes();
+
+		int newSelectedIndex = -1;
+		boolean notFound = true;
+
+		for(int i = 0; i<nodes.size(); i++)
+		{
+			if(nodes.get(i).getIsRendered())
+			{
+				if(notFound)
+				{
+					if(view.checkIfClickInsideNode(v, nodes.get(i)))
+					{
+						newSelectedIndex = i;
+						notFound = !notFound;
+					}
+				}
+
+			}
+		}
+
+		view.setIndexSelected(newSelectedIndex);
+	
 	}
 
 	public void		mouseEntered(MouseEvent e)
